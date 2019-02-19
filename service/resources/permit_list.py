@@ -9,9 +9,10 @@ class PermitList():
     """Permit List class"""
     scrndr = None
     scrndr_proj_id = None
+    logger_name = ''
 
     def __init__(self):
-        pass
+        self.logger_name = self.__class__.__name__.lower()
 
     def init_screendoor(self, key, version, host, project_id):
         """initialize screendoor"""
@@ -20,6 +21,7 @@ class PermitList():
 
     def get_permit_list(self, permit_type):
         """return list of permits"""
+        self.logger_name += '.'+ __name__+'.'+permit_type
         params = {'per_page': 100, 'page' : 1}
         if permit_type == 'retail':
             # pylint: disable=line-too-long
@@ -35,6 +37,7 @@ class PermitList():
             sd_responses_context = sd_responses
 
         with sentry_sdk.configure_scope() as scope:
+            scope.set_tag('logger', self.logger_name)
             scope.set_extra('get_permit_list.sd_responses', sd_responses_context)
 
         return self.get_list_transform(sd_responses)
