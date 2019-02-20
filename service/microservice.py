@@ -12,8 +12,12 @@ def start_service():
     set SENTRY_DSN environmental variable to enable logging with Sentry
     """
     # Initialize Sentry
+    sentry_dsn = os.environ.get('SENTRY_DSN')
+    if(os.environ.get('environment').lower() == 'production'
+       and os.environ.get('SENTRY_DSN_PRODUCTION')):
+        sentry_dsn = os.environ.get('SENTRY_DSN_PRODUCTION')
     sentry_sdk.init(
-        os.environ.get('SENTRY_DSN'),
+        sentry_dsn,
         environment=os.environ.get('environment')
     )
     # Initialize PermitList
