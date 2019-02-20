@@ -22,7 +22,7 @@ class PermitList():
     def get_permit_list(self, permit_type):
         """return list of permits"""
         self.logger_name += '.get_permit_list.'+permit_type
-        params = {'per_page': 100, 'page' : 1, 'label': 'Post+on+Website'} 
+        params = {'per_page': 100, 'page' : 1, 'label': 'Post+on+Website'}
         if permit_type == 'retail':
             # pylint: disable=line-too-long
             params['advanced_search'] = '%5B%7B"name"%3A"forms"%2C"method"%3A"is"%2C"value"%3A5804%7D%2C%7B"name"%3A"rfdd8a5g7g"%2C"method"%3A"is_any"%2C"value"%3A%5B"retailer+(medicinal+and+adult+use)"%2C"medicinal+retailer+(medicinal+only)"%2C"delivery+only+retailer+(medicinal+and+adult+use)"%5D%7D%5D'
@@ -69,7 +69,7 @@ class PermitList():
                         item['ADDRESS'] += ', '+addr.get('city', '')
                         item['ADDRESS'] += ', '+addr.get('state', '')
                         item['ADDRESS'] += ' '+addr.get('zipcode', '')
-
+                    item['ADDRESS'] = item['ADDRESS'].strip(' ,')
                     if data['dd8a5g7g'] and data['dd8a5g7g']['checked']:
                         for applied_permit_type in data['dd8a5g7g']['checked']:
                             item[applied_permit_type.upper()] = resp_status
@@ -109,6 +109,7 @@ class PermitList():
                 acts.append('delivery only retailer (medical and adult use)')
             if item.get('MEDICINAL RETAILER (MEDICINAL ONLY)'):
                 acts.append('medicinal cannabis retailer (medical only)')
+            new_item['activities'] = ", ".join(acts)
             legacy_permit_list[key] = new_item
         return legacy_permit_list
 

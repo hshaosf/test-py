@@ -6,32 +6,34 @@ def test_get_list_transform():
     """Test ELT for the Permit List"""
     permit_list_object = PermitList()
     permit_list = permit_list_object.get_list_transform(get_mock_sd_response())
+    print(permit_list)
     expected_permit_list = get_expected_permit_list()
     assert expected_permit_list == permit_list
 
+def test_get_legacy_list_transform():
+    """Test ELT for the Permit List"""
+    permit_list_object = PermitList()
+    permit_list = permit_list_object.get_list_transform(get_mock_sd_response())
+    legacy_permit_list = permit_list_object.get_legacy_list_transform(permit_list)
+    expected_permit_list = get_expected_legacy_permit_list()
+    assert expected_permit_list == legacy_permit_list
+
 def get_expected_permit_list():
     """returns expected permit list from mock"""
-    return json.loads("""[{"APPLICATION ID": "TESTblah",
-        "CULTIVATOR OR GROWER (INDOOR)": "SUBMITTED",
-        "DBA NAME": null,
-        "DISTRIBUTOR": "SUBMITTED",
-        "MANUFACTURER (NONVOLATILE)": "SUBMITTED",
-        "PARCEL": "no idea",
-        "REFERRING DEPARTMENT": "",
-        "RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED",
-        "STATUS": "SUBMITTED"},
-        {"APPLICATION ID": "TESTblah2",
-        "CULTIVATOR OR GROWER (INDOOR)": "SUBMITTED",
-        "DBA NAME": null,
-        "DISTRIBUTOR": "SUBMITTED",
-        "MANUFACTURER (NONVOLATILE)": "SUBMITTED",
-        "PARCEL": "no idea",
-        "REFERRING DEPARTMENT": "",
-        "RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", 
-        "DELIVERY ONLY RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", 
-        "MEDICINAL RETAILER (MEDICINAL ONLY)": "SUBMITTED",
-        "STATUS": "SUBMITTED"
-        }]""")
+    return json.loads("""[{"APPLICATION ID": "TESTblah", "DBA NAME": "",
+        "ADDRESS": "California", "PARCEL": "no idea", "STATUS": "SUBMITTED", "REFERRING DEPARTMENT": "", "CULTIVATOR OR GROWER (INDOOR)": "SUBMITTED", "DISTRIBUTOR": "SUBMITTED", "RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", "MANUFACTURER (NONVOLATILE)": "SUBMITTED"},
+        {"APPLICATION ID": "TESTblah2", "DBA NAME": "", "ADDRESS": "California", "PARCEL": "no idea", "STATUS": "SUBMITTED", "REFERRING DEPARTMENT": "", 
+        "CULTIVATOR OR GROWER (INDOOR)": "SUBMITTED", "DISTRIBUTOR": "SUBMITTED", "MANUFACTURER (NONVOLATILE)": "SUBMITTED", 
+        "RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", "DELIVERY ONLY RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", 
+        "MEDICINAL RETAILER (MEDICINAL ONLY)": "SUBMITTED"}]""")
+
+def get_expected_legacy_permit_list():
+    """returns legacy expected permit list from mock"""
+    return json.loads("""{"TESTblah": {"application_id": "TESTblah", "dba_name": "", 
+    "address": "California", "parcel": "no idea", "activities": "retailer (medical and adult use)", "referring_dept": "", "status": "Submitted"}, "TESTblah2": {"application_id": "TESTblah2", "dba_name": "", 
+    "address": "California", "parcel": "no idea", 
+    "activities": "retailer (medical and adult use), delivery only retailer (medical and adult use), medicinal cannabis retailer (medical only)", 
+    "referring_dept": "", "status": "Submitted"}}""")
 
 def get_mock_sd_response():
     """returns a mock response from screendoor"""
