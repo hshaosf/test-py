@@ -22,7 +22,7 @@ class PermitList():
     def get_permit_list(self, permit_type):
         """return list of permits"""
         self.logger_name += '.get_permit_list.'+permit_type
-        params = {'per_page': 100, 'page' : 1, 'label': 'Post+on+Website'}
+        params = {'per_page': 100, 'page' : 1, 'label': 'Post+on+Website'} 
         if permit_type == 'retail':
             # pylint: disable=line-too-long
             params['advanced_search'] = '%5B%7B"name"%3A"forms"%2C"method"%3A"is"%2C"value"%3A5804%7D%2C%7B"name"%3A"rfdd8a5g7g"%2C"method"%3A"is_any"%2C"value"%3A%5B"retailer+(medicinal+and+adult+use)"%2C"medicinal+retailer+(medicinal+only)"%2C"delivery+only+retailer+(medicinal+and+adult+use)"%5D%7D%5D'
@@ -54,14 +54,21 @@ class PermitList():
                     item = {
                         'APPLICATION ID':'',
                         'DBA NAME':'',
+                        'ADDRESS':'',
                         'PARCEL':'',
                         'STATUS':resp_status,
                         'REFERRING DEPARTMENT':''
                     }
                     data = resp['responses']
-                    item['APPLICATION ID'] = data.get('uqqrsogr', '')
-                    item['DBA NAME'] = data.get('60w4ep9y', '')
+                    item['APPLICATION ID'] = str(data.get('uqqrsogr') or '')
+                    item['DBA NAME'] = str(data.get('60w4ep9y') or '')
                     item['PARCEL'] = data.get('kvrgbqrl', '')
+                    if data.get('kby1cm3l'):
+                        addr = data.get('kby1cm3l')
+                        item['ADDRESS'] = addr.get('street', '')
+                        item['ADDRESS'] += ', '+addr.get('city', '')
+                        item['ADDRESS'] += ', '+addr.get('state', '')
+                        item['ADDRESS'] += ' '+addr.get('zipcode', '')
 
                     if data['dd8a5g7g'] and data['dd8a5g7g']['checked']:
                         for applied_permit_type in data['dd8a5g7g']['checked']:
@@ -81,22 +88,51 @@ class PermitList():
             return False
         return permit_list
 
+    def get_legacy_list_transform(self, permit_list):
+        """ return permit list in legacy format """
+        legacy_permit_list = {}
+        for item in permit_list:
+            key = (item['DBA NAME'] + ' ' + item['APPLICATION ID']).strip()
+            new_item = {
+                'application_id':item['APPLICATION ID'],
+                'dba_name':item['DBA NAME'],
+                'address':item['ADDRESS'],
+                'parcel':item['PARCEL'],
+                'activities':'',
+                'referring_dept':'',
+                'status': item['STATUS'].title()
+            }
+            acts = []
+            if item.get('RETAILER (MEDICINAL AND ADULT USE)'):
+                acts.append('retailer (medical and adult use)')
+            if item.get('DELIVERY ONLY RETAILER (MEDICINAL AND ADULT USE)'):
+                acts.append('delivery only retailer (medical and adult use)')
+            if item.get('MEDICINAL RETAILER (MEDICINAL ONLY)'):
+                acts.append('medicinal cannabis retailer (medical only)')
+            legacy_permit_list[key] = new_item
+        return legacy_permit_list
+
     def on_get(self, _req, resp, permit_type):
         """on GET request
         return list of permits
         """
         msg = False
-        if permit_type == 'retail':
+        if permit_type in ('retail', 'retail_legacy'):
             permit_list = self.get_permit_list(permit_type)
+            permit_list.sort(key=lambda v: v.get('DBA NAME', '')+' '+v.get('APPLICATION ID', ''))
             if isinstance(permit_list, list):
-                data = {'list': permit_list}
+                if permit_type == 'retail_legacy':
+                    data_json = self.get_legacy_list_transform(permit_list)
+                else:
+                    data = {'list': permit_list}
+                    data_json = jsend.success(data)
                 msg = 'success ('+str(len(permit_list))+')'
         else:
             pass
 
         if msg is not False:
             sentry_sdk.capture_message(msg, 'info')
-            resp.body = json.dumps(jsend.success(data))
+            resp.body = json.dumps(data_json)
             resp.status = falcon.HTTP_200
         else:
             msg = 'ERROR'
