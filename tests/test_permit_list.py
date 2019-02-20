@@ -22,7 +22,7 @@ def get_expected_permit_list():
     """returns expected permit list from mock"""
     return json.loads("""[{"APPLICATION ID": "TESTblah", "DBA NAME": "",
         "ADDRESS": "California", "PARCEL": "no idea", "STATUS": "SUBMITTED", "REFERRING DEPARTMENT": "", "CULTIVATOR OR GROWER (INDOOR)": "SUBMITTED", "DISTRIBUTOR": "SUBMITTED", "RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", "MANUFACTURER (NONVOLATILE)": "SUBMITTED"},
-        {"APPLICATION ID": "TESTblah2", "DBA NAME": "", "ADDRESS": "California", "PARCEL": "no idea", "STATUS": "SUBMITTED", "REFERRING DEPARTMENT": "", 
+        {"APPLICATION ID": "TESTblah2", "DBA NAME": "Bestest Buddy Bud", "ADDRESS": "California", "PARCEL": "no idea", "STATUS": "SUBMITTED", "REFERRING DEPARTMENT": "", 
         "CULTIVATOR OR GROWER (INDOOR)": "SUBMITTED", "DISTRIBUTOR": "SUBMITTED", "MANUFACTURER (NONVOLATILE)": "SUBMITTED", 
         "RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", "DELIVERY ONLY RETAILER (MEDICINAL AND ADULT USE)": "SUBMITTED", 
         "MEDICINAL RETAILER (MEDICINAL ONLY)": "SUBMITTED"}]""")
@@ -30,7 +30,7 @@ def get_expected_permit_list():
 def get_expected_legacy_permit_list():
     """returns legacy expected permit list from mock"""
     return json.loads("""{"TESTblah": {"application_id": "TESTblah", "dba_name": "", 
-    "address": "California", "parcel": "no idea", "activities": "retailer (medical and adult use)", "referring_dept": "", "status": "Submitted"}, "TESTblah2": {"application_id": "TESTblah2", "dba_name": "", 
+    "address": "California", "parcel": "no idea", "activities": "retailer (medical and adult use)", "referring_dept": "", "status": "Submitted"}, "Bestest Buddy Bud TESTblah2": {"application_id": "TESTblah2", "dba_name": "Bestest Buddy Bud", 
     "address": "California", "parcel": "no idea", 
     "activities": "retailer (medical and adult use), delivery only retailer (medical and adult use), medicinal cannabis retailer (medical only)", 
     "referring_dept": "", "status": "Submitted"}}""")
@@ -316,7 +316,7 @@ def get_mock_sd_response():
             "6ma0d8qo": null,
             "fkpuv8fj": "1234567",
             "t00kheyd": "Bestest Buddy Bud Bud",
-            "60w4ep9y": null,
+            "60w4ep9y": "Bestest Buddy Bud",
             "kbqz4189": {
                 "city": "San Francisco",
                 "state": "California",
