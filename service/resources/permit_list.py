@@ -21,8 +21,8 @@ class PermitList():
 
     def get_permit_list(self, permit_type):
         """return list of permits"""
-        self.logger_name += '.'+ __name__+'.'+permit_type
-        params = {'per_page': 100, 'page' : 1}
+        self.logger_name += '.get_permit_list.'+permit_type
+        params = {'per_page': 100, 'page' : 1, 'label': 'Post+on+Website'}
         if permit_type == 'retail':
             # pylint: disable=line-too-long
             params['advanced_search'] = '%5B%7B"name"%3A"forms"%2C"method"%3A"is"%2C"value"%3A5804%7D%2C%7B"name"%3A"rfdd8a5g7g"%2C"method"%3A"is_any"%2C"value"%3A%5B"retailer+(medicinal+and+adult+use)"%2C"medicinal+retailer+(medicinal+only)"%2C"delivery+only+retailer+(medicinal+and+adult+use)"%5D%7D%5D'
@@ -89,13 +89,14 @@ class PermitList():
         if permit_type == 'retail':
             permit_list = self.get_permit_list(permit_type)
             if isinstance(permit_list, list):
-                msg = {'list': permit_list}
+                data = {'list': permit_list}
+                msg = 'success ('+len(permit_list)+')'
         else:
             pass
 
         if msg is not False:
-            sentry_sdk.capture_message('success', 'info')
-            resp.body = json.dumps(jsend.success(msg))
+            sentry_sdk.capture_message(msg, 'info')
+            resp.body = json.dumps(jsend.success(data))
             resp.status = falcon.HTTP_200
         else:
             msg = 'ERROR'
