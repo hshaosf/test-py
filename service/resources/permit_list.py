@@ -90,7 +90,7 @@ class PermitList():
             permit_list = self.get_permit_list(permit_type)
             if isinstance(permit_list, list):
                 data = {'list': permit_list}
-                msg = 'success ('+len(permit_list)+')'
+                msg = 'success ('+str(len(permit_list))+')'
         else:
             pass
 
