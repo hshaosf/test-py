@@ -15,7 +15,9 @@ class Datastore():
         return Datastore message
         """
         msg = {'message': 'Datastore'}
-        if hasattr(self.__class__, method) and callable(getattr(self.__class__, method)):
+        if (self.is_auth()
+                and hasattr(self.__class__, method)
+                and callable(getattr(self.__class__, method))):
             dispatch = getattr(self, method)
             if method.startswith('screendoor_'):
                 sd_key = os.environ['SD_KEY']
@@ -24,6 +26,11 @@ class Datastore():
 
         resp.body = json.dumps(jsend.success(msg))
         resp.status = falcon.HTTP_200
+
+    @staticmethod
+    def is_auth():
+        """ is authenticated """
+        return True
 
     def screendoor_get_project(self, _req, _resp):
         """ get part one from screendoor """

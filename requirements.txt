@@ -36,11 +36,12 @@ pytest==4.2.0
 pytest-cov==2.6.1
 python-mimeparse==1.6.0
 requests==2.21.0
+-e git://github.com/SFDigitalServices/screendoor-sdk-py@220d0801c866fd8e6d7d0ec571bcbbc7bf35927a#egg=screendoor_sdk
 sentry-sdk==0.6.9
 six==1.12.0
 stevedore==1.30.0
 traitlets==4.3.2
-urllib3==1.24.1
+urllib3==1.24.2
 virtualenv==16.2.0
 virtualenv-clone==0.5.1
 virtualenvwrapper==4.8.2

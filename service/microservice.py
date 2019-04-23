@@ -22,6 +22,10 @@ def start_service():
     sentry_sdk.init(os.environ.get('SENTRY_DSN'))
     # Initialize Falcon
     api = falcon.API()
+    if os.environ.get('environment') == 'development':
+        api.resp_options.secure_cookies_by_default = False
+    else:
+        api.resp_options.secure_cookies_by_default = True            
     api.add_route('/welcome', Welcome())
     api.add_route('/callback/{name}', Callback())
     api.add_route('/datastore/{method}', Datastore())
@@ -43,4 +47,6 @@ def web_index(_req, resp):
     resp.content_type = 'text/html; charset=utf-8'
     filename = os.path.join(WEB_PATH, 'index.html')
     with open(filename, 'rt') as fileobj:
-        resp.body = fileobj.read()
+        content = fileobj.read()
+        script = '<script type="text/javascript">var __web={"auth_domain":"'+str(os.environ['AUTH_DOMAIN'])+'", "auth_id":"'+str(os.environ['AUTH_ID'])+'"}</script>'
+        resp.body = content.replace("</body>", script+"</body>")
